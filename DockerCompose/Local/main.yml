@@ -56,7 +56,7 @@ services:
 # ===================== Migration =====================
 
   db-migrations:
-    image: coin-keeper/migration-bundle:dev
+    image: ghcr.io/alekaz04/coinkeeper/migration-bundle:dev
     restart: on-failure
     depends_on:
       - postgres
@@ -65,7 +65,7 @@ services:
 
 # ===================== Сервисы =====================
   backend:
-    image: coin-keeper/backend:dev
+    image: ghcr.io/alekaz04/coinkeeper/backend:dev
     restart: always    
     depends_on:
       - postgres
