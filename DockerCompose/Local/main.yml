@@ -1,0 +1,78 @@
+networks:
+  default:
+    driver: bridge
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.27.1.0/24
+
+volumes:
+    portainer:
+    pgresdata:
+    
+# =====================Внешние сервисы окружения=====================
+services:
+  dozzle:
+    image: amir20/dozzle
+    container_name: dozzle
+    restart: always
+    networks:
+    - default
+    ports:
+    - "8888:8080"
+    environment:
+    - DOZZLE_NO_ANALYTICS=true
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+
+  portainer-ce:
+    image: portainer/portainer-ce:2.19.4
+    container_name: portainer-ce
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer:/data
+    ports:
+      - "9443:9443"
+      - "8000:8000"
+
+# ===================== Database =====================
+  postgres:
+    restart: always
+    image: postgres:16.3
+    ports:
+      - 5432:5432
+    env_file:
+      - env/postgres.env
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    #volumes:
+    #  - pgresdata:/var/lib/postgresql/data
+
+# ===================== Migration =====================
+
+  db-migrations:
+    image: coin-keeper/migration-bundle:dev
+    restart: on-failure
+    depends_on:
+      - postgres
+    env_file:
+      - env/backend.env
+
+# ===================== Сервисы =====================
+  backend:
+    image: coin-keeper/backend:dev
+    restart: always    
+    depends_on:
+      - postgres
+      - db-migrations
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Debug
+    env_file:
+      - env/backend.env
