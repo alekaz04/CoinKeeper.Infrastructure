@@ -55,6 +55,22 @@ services:
 
 # ===================== Migration =====================
 
+  #создание базы Logs и таблице в ней, перед стартом сервисов cpm-backend и cpm-scheduler
+  postgres_init:
+    image: postgres:16.3
+    depends_on:
+      - postgres
+    env_file:
+      - env/postgres.env
+    volumes:
+      - ./pg-db-init:/init-db
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "
+      until pg_isready -h postgres -U postgres; do echo 'Waiting for database...'; sleep 2; done;
+      psql -v ON_ERROR_STOP=1 -h postgres -U postgres -f /init-db/01__create_db_logs.sql
+      " 
+
   db-migrations:
     image: ghcr.io/alekaz04/coinkeeper/migration-bundle:dev
     restart: on-failure
