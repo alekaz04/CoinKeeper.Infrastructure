@@ -1,1 +1,1 @@
-CREATE DATABASE IF NOT EXISTS `CoinKeeper.Dev.Logs`;
+CREATE DATABASE "CoinKeeper.Dev.Logs";
