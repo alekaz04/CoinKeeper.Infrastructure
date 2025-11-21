@@ -5,7 +5,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.27.1.0/24
+        - subnet: 172.27.2.0/24
 
 volumes:
     portainer:
