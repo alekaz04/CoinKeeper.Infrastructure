@@ -1,12 +1,3 @@
-networks:
-  default:
-    driver: bridge
-    attachable: true
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.27.2.0/24
-
 volumes:
     portainer:
     pgresdata:
