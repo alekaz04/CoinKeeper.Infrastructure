@@ -1,1 +1,0 @@
-CREATE DATABASE "CoinKeeper.Dev.Logs";
